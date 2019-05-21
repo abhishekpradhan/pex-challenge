@@ -56,7 +56,7 @@ public class ImageAnalyzer
         }
         catch (IOException exception)
         {
-            System.err.println(exception.toString() + " for image " + imageURL);
+            System.err.println("Bad Image URL: " + imageURL);
         }
     }
 
