@@ -12,6 +12,10 @@ import java.util.*;
 import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
+/**
+ * The image analyzer class is designed to solve the following problem:
+ * https://gist.github.com/ehmo/e736c827ca73d84581d812b3a27bb132
+ */
 public class ImageAnalyzer
 {
     public static void main(String[] args)
@@ -34,6 +38,34 @@ public class ImageAnalyzer
         }
     }
 
+    /**
+     * Process an image given a url to find the top
+     * three common colors in that image.
+     * @param imageURL a url pointing to an image
+     * @param pathToOutputFile path to the file containing results
+     */
+    private static void processImage(String imageURL, Path pathToOutputFile)
+    {
+        try
+        {
+            BufferedImage image = ImageIO.read(new URL(imageURL));
+            String commonColors = findCommonColors(image);
+            String result = imageURL + "," + commonColors + "\n";
+
+            Files.write(pathToOutputFile, result.getBytes(), StandardOpenOption.APPEND);
+        }
+        catch (IOException exception)
+        {
+            System.err.println(exception.toString() + " for image " + imageURL);
+        }
+    }
+
+    /**
+     * Returns a string that represents the top three colors
+     * found in a given image.
+     * @param image the image that needs to be processed
+     * @return string representation of colors
+     */
     private static String findCommonColors(BufferedImage image)
     {
         HashMap<Color, Integer> colorToCountMap = countColorsInImage(image);
@@ -55,6 +87,11 @@ public class ImageAnalyzer
         return firstColorHex + "," + secondColorHex + "," + thirdColorHex;
     }
 
+    /**
+     * Creates a count of all the colors and their prevalence in the image.
+     * @param image image that needs to be analyzed
+     * @return map of colors and their integer counts
+     */
     private static HashMap<Color, Integer> countColorsInImage(BufferedImage image)
     {
         HashMap<Color, Integer> colorToCountMap = new HashMap<>();
@@ -76,22 +113,12 @@ public class ImageAnalyzer
         return colorToCountMap;
     }
 
-    private static void processImage(String imageURL, Path pathToOutputFile)
-    {
-        try
-        {
-            BufferedImage image = ImageIO.read(new URL(imageURL));
-            String commonColors = findCommonColors(image);
-            String result = imageURL + "," + commonColors + "\n";
-
-            Files.write(pathToOutputFile, result.getBytes(), StandardOpenOption.APPEND);
-        }
-        catch (IOException exception)
-        {
-            System.err.println(exception.toString() + " for image " + imageURL);
-        }
-    }
-
+    /**
+     * Convert a Color into a string representing its
+     * hexadecimal format (#000000 - #FFFFFF).
+     * @param color that needs to be converted
+     * @return hexadecimal string representation
+     */
     private static String getHexFromColor(Color color)
     {
         if (color == null)
